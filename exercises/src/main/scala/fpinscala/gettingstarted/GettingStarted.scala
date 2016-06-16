@@ -1,5 +1,7 @@
 package fpinscala.gettingstarted
 
+import sun.font.TrueTypeFont
+
 // A comment!
 /* Another comment */
 /** A documentation comment */
@@ -36,8 +38,16 @@ object MyModule {
 
   // Exercise 1: Write a function to compute the nth fibonacci number
 
-  def fib(n: Int): Int = ???
+  def fib(n: Int) : Int = {
+    @annotation.tailrec
+    def fib1(n: Int, first: Int, second: Int): Int = {
+      if (n == 1) first
+      else if (n == 2) second
+      else fib1(n - 1, second, first + second)
+    }
 
+    fib1(n,0,1)
+  }
   // This definition and `formatAbs` are very similar..
   private def formatFactorial(n: Int) = {
     val msg = "The factorial of %d is %d."
@@ -61,6 +71,9 @@ object FormatAbsAndFactorial {
   def main(args: Array[String]): Unit = {
     println(formatResult("absolute value", -42, abs))
     println(formatResult("factorial", 7, factorial))
+    println(fib1(5,0,1).toString());
+    println(PolymorphicFunctions.isSorted(Array(1,2,3,4,4), (x:Int, y:Int) => x > y ))
+    println(PolymorphicFunctions.isSorted(Array(1,2,3,4,5), (x:Int, y:Int) => x > y ))
   }
 }
 
@@ -140,7 +153,13 @@ object PolymorphicFunctions {
 
   // Exercise 2: Implement a polymorphic function to check whether
   // an `Array[A]` is sorted
-  def isSorted[A](as: Array[A], gt: (A,A) => Boolean): Boolean = ???
+  def isSorted[A](as: Array[A], gt: (A,A) => Boolean): Boolean = {
+    val length = as.length
+    length match {
+      case 1 => true
+      case _ => isSorted(as.slice(0,length-1),gt) && gt(as(length-1),as(length-2))
+    }
+  }
 
   // Polymorphic functions are often so constrained by their type
   // that they only have one implementation! Here's an example:
